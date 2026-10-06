@@ -1,5 +1,6 @@
 package com.contalitro.backend.mqtt;
 
+
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -24,13 +25,23 @@ public class MqttConfig {
     @Value("${mqtt.topic.conta-litro:conta-litro/telemetria/#}")
     private String topic;
 
+    @Value("${mqtt.username}")
+    private String username;
+
+    @Value("${mqtt.password}")
+    private String password;
+
     @Bean
     public MqttPahoClientFactory mqttClientFactory() {
         DefaultMqttPahoClientFactory factory = new DefaultMqttPahoClientFactory();
         MqttConnectOptions options = new MqttConnectOptions();
         options.setServerURIs(new String[]{brokerUrl});
+
+        options.setUserName(username);
+        options.setPassword(password.toCharArray());
+
         options.setCleanSession(true);
-        options.setAutomaticReconnect(true); // Reconecta sozinho se a ligação cair[cite: 6]
+        options.setAutomaticReconnect(false); // Reconecta sozinho se a ligação cair[cite: 6]
         factory.setConnectionOptions(options);
         return factory;
     }
